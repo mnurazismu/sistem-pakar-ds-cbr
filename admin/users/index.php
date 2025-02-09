@@ -39,55 +39,83 @@ $result = mysqli_query($conn, $query);
     <title>Kelola Users - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <script src="../../src/jquery-3.6.3.min.js"></script>
+    <script src="../../src/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body class="bg-gray-50">
-    <?php renderAdminSidebar('users'); // Render sidebar dengan halaman aktif ?>
-    
+    <?php renderAdminSidebar('users'); ?>
+
     <!-- Main Content -->
     <div class="p-4 sm:ml-64">
-        <div class="p-4 bg-white rounded-lg shadow-md">
-            <div class="mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800">Kelola Users</h1>
-                <p class="text-gray-600">Manajemen data pengguna sistem pakar</p>
-            </div>
+        <div class="p-4">
+            <!-- Breadcrumb -->
+            <nav class="flex mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="../dashboard.php" class="text-gray-700 hover:text-blue-600 inline-flex items-center">
+                            <i class="fas fa-home mr-2.5"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-300 mx-2"></i>
+                            <span class="text-gray-500">Users</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
 
-            <!-- Search and Filter -->
-            <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div class="w-full md:w-1/3">
-                    <div class="relative">
-                        <input type="text" id="searchInput" 
-                               class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-10"
-                               placeholder="Cari user...">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Users</h2>
+                        <p class="text-gray-600 mt-1">Manajemen data pengguna sistem pakar</p>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Section -->
+                <div class="mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="searchInput" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" id="searchInput"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                    placeholder="Cari user...">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Users Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                <!-- Table -->
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Diagnosis</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnosis Terakhir</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                <th class="px-6 py-3">User</th>
+                                <th class="px-6 py-3">Email</th>
+                                <th class="px-6 py-3">Total Diagnosis</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3">Diagnosis Terakhir</th>
+                                <th class="px-6 py-3">
+                                    <span class="sr-only">Aksi</span>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody>
                             <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <div
+                                                class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                                                 <span class="text-blue-600 font-semibold text-lg">
                                                     <?= strtoupper(substr($row['nama_lengkap'], 0, 1)) ?>
                                                 </span>
@@ -103,34 +131,50 @@ $result = mysqli_query($conn, $query);
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4">
                                     <?= htmlspecialchars($row['email']) ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900"><?= $row['total_diagnosis'] ?> Diagnosis</div>
-                                    <div class="text-xs text-gray-500">
-                                        <span class="text-green-600"><?= $row['valid_diagnosis'] ?> Valid</span> •
-                                        <span class="text-red-600"><?= $row['invalid_diagnosis'] ?> Invalid</span> •
-                                        <span class="text-yellow-600"><?= $row['pending_diagnosis'] ?> Pending</span>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col space-y-1">
+                                        <span class="text-sm text-gray-900"><?= $row['total_diagnosis'] ?>
+                                            Diagnosis</span>
+                                        <div class="flex items-center space-x-2">
+                                            <span
+                                                class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <?= $row['valid_diagnosis'] ?> Valid
+                                            </span>
+                                            <span
+                                                class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <?= $row['invalid_diagnosis'] ?> Invalid
+                                            </span>
+                                            <span
+                                                class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <?= $row['pending_diagnosis'] ?> Pending
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4">
                                     <?php if ($row['status_aktif']): ?>
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Aktif
-                                        </span>
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Aktif
+                                    </span>
                                     <?php else: ?>
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                            Nonaktif
-                                        </span>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Nonaktif
+                                    </span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4">
                                     <?= $row['last_diagnosis'] ? date('d/m/Y H:i', strtotime($row['last_diagnosis'])) : '-' ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <button onclick="toggleUserStatus(<?= $row['id_user'] ?>, <?= $row['status_aktif'] ?>)" 
-                                            class="text-blue-600 hover:text-blue-900">
+                                <td class="px-6 py-4">
+                                    <button
+                                        onclick="toggleUserStatus(<?= $row['id_user'] ?>, <?= $row['status_aktif'] ?>)"
+                                        class="text-blue-600 hover:text-blue-900">
+                                        <i
+                                            class="fas <?= $row['status_aktif'] ? 'fa-user-slash' : 'fa-user-check' ?>"></i>
                                         <?= $row['status_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?>
                                     </button>
                                 </td>
@@ -143,47 +187,50 @@ $result = mysqli_query($conn, $query);
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <script>
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            let filter = this.value.toLowerCase();
-            let rows = document.querySelectorAll('tbody tr');
-            
-            rows.forEach(row => {
-                let nameCell = row.querySelector('td:first-child');
-                let emailCell = row.querySelector('td:nth-child(2)');
-                let name = nameCell.textContent.toLowerCase();
-                let email = emailCell.textContent.toLowerCase();
-                
-                if (name.includes(filter) || email.includes(filter)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
+    // Search functionality with improved filtering
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('tbody tr');
 
-        // Toggle user status
-        function toggleUserStatus(userId, currentStatus) {
-            const newStatus = !currentStatus;
-            const action = newStatus ? 'mengaktifkan' : 'menonaktifkan';
-            
-            Swal.fire({
-                title: `Konfirmasi ${action} user`,
-                text: `Apakah Anda yakin ingin ${action} user ini?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Send AJAX request to update status
-                    fetch('toggle_status.php', {
+        rows.forEach(row => {
+            let nameCell = row.querySelector('td:first-child');
+            let emailCell = row.querySelector('td:nth-child(2)');
+            let name = nameCell.textContent.toLowerCase();
+            let email = emailCell.textContent.toLowerCase();
+
+            if (name.includes(filter) || email.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Toggle user status with improved UI
+    function toggleUserStatus(userId, currentStatus) {
+        const newStatus = !currentStatus;
+        const action = newStatus ? 'mengaktifkan' : 'menonaktifkan';
+
+        Swal.fire({
+            title: 'Konfirmasi Status',
+            html: `<div class="text-left">
+                     <p class="mb-2">Apakah Anda yakin ingin ${action} user ini?</p>
+                     <p class="text-sm text-gray-500">User ${newStatus ? 'akan dapat' : 'tidak akan dapat'} mengakses sistem.</p>
+                   </div>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `<i class="fas ${newStatus ? 'fa-user-check' : 'fa-user-slash'} mr-2"></i>Ya, ${action}!`,
+            cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
+            customClass: {
+                confirmButton: 'flex items-center',
+                cancelButton: 'flex items-center'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('toggle_status.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -193,25 +240,29 @@ $result = mysqli_query($conn, $query);
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            Swal.fire(
-                                'Berhasil!',
-                                `User berhasil ${action}!`,
-                                'success'
-                            ).then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: `User berhasil ${action}!`,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            Swal.fire(
-                                'Gagal!',
-                                'Terjadi kesalahan saat mengubah status user.',
-                                'error'
-                            );
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat mengubah status user.',
+                            });
                         }
                     });
-                }
-            });
-        }
+            }
+        });
+    }
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
 
 </html>

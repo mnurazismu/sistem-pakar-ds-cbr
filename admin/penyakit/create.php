@@ -17,14 +17,14 @@ if (isset($_POST['submit'])) {
     $nama_penyakit = trim($_POST['nama_penyakit']);
     $deskripsi = trim($_POST['deskripsi']);
     $tingkat_keparahan = $_POST['tingkat_keparahan'];
-    
+
     $errors = [];
-    
+
     // Validasi input
     if (empty($kode_penyakit)) {
         $errors[] = "Kode penyakit harus diisi!";
     }
-    
+
     if (empty($nama_penyakit)) {
         $errors[] = "Nama penyakit harus diisi!";
     }
@@ -32,7 +32,7 @@ if (isset($_POST['submit'])) {
     if (!in_array($tingkat_keparahan, ['Ringan', 'Sedang', 'Berat'])) {
         $errors[] = "Tingkat keparahan tidak valid!";
     }
-    
+
     // Cek duplikasi kode penyakit
     $query_check = "SELECT id_penyakit FROM penyakit WHERE kode_penyakit = ?";
     $stmt_check = mysqli_prepare($conn, $query_check);
@@ -41,12 +41,12 @@ if (isset($_POST['submit'])) {
     if (mysqli_stmt_fetch($stmt_check)) {
         $errors[] = "Kode penyakit sudah digunakan!";
     }
-    
+
     if (empty($errors)) {
         $query = "INSERT INTO penyakit (kode_penyakit, nama_penyakit, deskripsi, tingkat_keparahan) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "ssss", $kode_penyakit, $nama_penyakit, $deskripsi, $tingkat_keparahan);
-        
+
         if (mysqli_stmt_execute($stmt)) {
             echo '
             <script src="../../src/jquery-3.6.3.min.js"></script>
@@ -90,89 +90,171 @@ if (isset($_POST['submit'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Penyakit - Sistem Pakar</title>
+    <title>Tambah Penyakit - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     <script src="../../src/jquery-3.6.3.min.js"></script>
     <script src="../../src/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body class="bg-gray-50">
     <?php renderAdminSidebar('penyakit'); ?>
-    
+
     <div class="p-4 sm:ml-64">
         <div class="p-4">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-800">Tambah Penyakit</h2>
-                    <a href="index.php" class="text-gray-600 hover:text-gray-900">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+            <!-- Breadcrumb -->
+            <nav class="flex mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="../dashboard.php" class="text-gray-700 hover:text-blue-600 inline-flex items-center">
+                            <i class="fas fa-home mr-2.5"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-300 mx-2"></i>
+                            <a href="index.php" class="text-gray-700 hover:text-blue-600">
+                                Penyakit
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-300 mx-2"></i>
+                            <span class="text-gray-500">Tambah</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Tambah Penyakit</h2>
+                        <p class="text-gray-600 mt-1">Tambahkan data penyakit baru ke sistem</p>
+                    </div>
+                    <a href="index.php" class="inline-flex items-center text-blue-600 hover:text-blue-700">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Kembali
                     </a>
                 </div>
 
                 <?php if (!empty($errors)): ?>
-                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                        <ul class="list-disc list-inside">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?= $error ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                        <h3 class="text-red-800 font-medium">Terdapat beberapa kesalahan:</h3>
                     </div>
+                    <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                        <?php foreach ($errors as $error): ?>
+                        <li><?= $error ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
                 <?php endif; ?>
 
                 <form method="POST" class="space-y-6">
-                    <div>
-                        <label for="kode_penyakit" class="block text-sm font-medium text-gray-700">
-                            Kode Penyakit <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="kode_penyakit" name="kode_penyakit" 
-                               value="<?= isset($_POST['kode_penyakit']) ? htmlspecialchars($_POST['kode_penyakit']) : '' ?>"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                               placeholder="Contoh: P001">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Informasi Dasar Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-4">
+                            <h3 class="font-medium text-gray-900 mb-2">
+                                <i class="fas fa-info-circle text-blue-500 mr-2"></i>Informasi Dasar
+                            </h3>
+
+                            <!-- Kode Penyakit -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">
+                                    Kode Penyakit <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-code text-gray-400"></i>
+                                    </div>
+                                    <input type="text" name="kode_penyakit" required
+                                        value="<?= isset($_POST['kode_penyakit']) ? htmlspecialchars($_POST['kode_penyakit']) : '' ?>"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                        placeholder="Contoh: P001">
+                                </div>
+                            </div>
+
+                            <!-- Nama Penyakit -->
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">
+                                    Nama Penyakit <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-virus text-gray-400"></i>
+                                    </div>
+                                    <input type="text" name="nama_penyakit" required
+                                        value="<?= isset($_POST['nama_penyakit']) ? htmlspecialchars($_POST['nama_penyakit']) : '' ?>"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                        placeholder="Masukkan nama penyakit">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tingkat Keparahan Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-4">
+                            <h3 class="font-medium text-gray-900 mb-2">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Tingkat Keparahan
+                            </h3>
+
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">
+                                    Level Keparahan <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-layer-group text-gray-400"></i>
+                                    </div>
+                                    <select name="tingkat_keparahan" required
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5">
+                                        <option value="">Pilih Tingkat Keparahan</option>
+                                        <option value="Ringan"
+                                            <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Ringan') ? 'selected' : '' ?>>
+                                            Ringan
+                                        </option>
+                                        <option value="Sedang"
+                                            <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Sedang') ? 'selected' : '' ?>>
+                                            Sedang
+                                        </option>
+                                        <option value="Berat"
+                                            <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Berat') ? 'selected' : '' ?>>
+                                            Berat
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deskripsi Section -->
+                        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-medium text-gray-900 mb-4">
+                                <i class="fas fa-align-left text-purple-500 mr-2"></i>Deskripsi Penyakit
+                            </h3>
+                            <textarea name="deskripsi" rows="4"
+                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="Masukkan deskripsi atau penjelasan tentang penyakit..."><?= isset($_POST['deskripsi']) ? htmlspecialchars($_POST['deskripsi']) : '' ?></textarea>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="nama_penyakit" class="block text-sm font-medium text-gray-700">
-                            Nama Penyakit <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="nama_penyakit" name="nama_penyakit"
-                               value="<?= isset($_POST['nama_penyakit']) ? htmlspecialchars($_POST['nama_penyakit']) : '' ?>"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
-
-                    <div>
-                        <label for="deskripsi" class="block text-sm font-medium text-gray-700">
-                            Deskripsi
-                        </label>
-                        <textarea id="deskripsi" name="deskripsi" rows="3"
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"><?= isset($_POST['deskripsi']) ? htmlspecialchars($_POST['deskripsi']) : '' ?></textarea>
-                    </div>
-
-                    <div>
-                        <label for="tingkat_keparahan" class="block text-sm font-medium text-gray-700">
-                            Tingkat Keparahan <span class="text-red-500">*</span>
-                        </label>
-                        <select id="tingkat_keparahan" name="tingkat_keparahan"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option value="">Pilih Tingkat Keparahan</option>
-                            <option value="Ringan" <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Ringan') ? 'selected' : '' ?>>Ringan</option>
-                            <option value="Sedang" <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Sedang') ? 'selected' : '' ?>>Sedang</option>
-                            <option value="Berat" <?= (isset($_POST['tingkat_keparahan']) && $_POST['tingkat_keparahan'] === 'Berat') ? 'selected' : '' ?>>Berat</option>
-                        </select>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <a href="index.php" 
-                           class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    <div class="flex justify-end space-x-3 pt-6">
+                        <a href="index.php"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
+                            <i class="fas fa-times mr-2"></i>
                             Batal
                         </a>
                         <button type="submit" name="submit"
-                                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Simpan
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-save mr-2"></i>
+                            Simpan Penyakit
                         </button>
                     </div>
                 </form>
@@ -182,4 +264,5 @@ if (isset($_POST['submit'])) {
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
+
 </html>

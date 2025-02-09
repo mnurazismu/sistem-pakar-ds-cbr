@@ -91,108 +91,201 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Pilihan Jawaban - Sistem Pakar</title>
+    <title>Tambah Pilihan Jawaban - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     <script src="../../src/jquery-3.6.3.min.js"></script>
     <script src="../../src/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body class="bg-gray-50">
     <?php renderAdminSidebar('pilihan_jawaban'); ?>
-    
+
     <!-- Main Content -->
     <div class="p-4 sm:ml-64">
         <div class="p-4">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-800">Tambah Pilihan Jawaban</h2>
-                    <a href="index.php" class="text-blue-500 hover:text-blue-600">
-                        Kembali ke Daftar
+            <!-- Breadcrumb -->
+            <nav class="flex mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="../dashboard.php" class="text-gray-700 hover:text-blue-600 inline-flex items-center">
+                            <i class="fas fa-home mr-2.5"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-300 mx-2"></i>
+                            <a href="index.php" class="text-gray-700 hover:text-blue-600">
+                                Pilihan Jawaban
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-300 mx-2"></i>
+                            <span class="text-gray-500">Tambah</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-gray-800">Tambah Pilihan Jawaban</h2>
+                        <p class="text-gray-600 mt-1">Tambahkan pilihan jawaban untuk pertanyaan</p>
+                    </div>
+                    <a href="index.php" class="inline-flex items-center text-blue-600 hover:text-blue-700">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Kembali
                     </a>
                 </div>
 
+                <?php if (!empty($errors)): ?>
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                        <h3 class="text-red-800 font-medium">Terdapat beberapa kesalahan:</h3>
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                        <?php foreach ($errors as $error): ?>
+                        <li><?= $error ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php endif; ?>
+
                 <form method="POST" class="space-y-6">
-                    <!-- Pertanyaan -->
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900">
-                            Pertanyaan <span class="text-red-500">*</span>
-                        </label>
+                    <!-- Pilih Pertanyaan Section -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-900 mb-4">
+                            <i class="fas fa-question-circle text-blue-500 mr-2"></i>Pilih Pertanyaan
+                        </h3>
                         <select name="id_pertanyaan" required id="pertanyaan"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option value="">Pilih Pertanyaan</option>
                             <?php while ($pertanyaan = mysqli_fetch_assoc($result_pertanyaan)): ?>
-                                <option value="<?= $pertanyaan['id_pertanyaan'] ?>" 
-                                        data-jenis="<?= $pertanyaan['jenis_input'] ?>">
-                                    <?= htmlspecialchars($pertanyaan['kode_pertanyaan'] . ' - ' . $pertanyaan['isi_pertanyaan']) ?>
-                                </option>
+                            <option value="<?= $pertanyaan['id_pertanyaan'] ?>"
+                                data-jenis="<?= $pertanyaan['jenis_input'] ?>">
+                                <?= htmlspecialchars($pertanyaan['kode_pertanyaan'] . ' - ' . $pertanyaan['isi_pertanyaan']) ?>
+                            </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
 
                     <!-- Form untuk input biasa -->
-                    <div id="normalInput">
+                    <div id="normalInput" class="bg-gray-50 p-4 rounded-lg space-y-4">
+                        <h3 class="font-medium text-gray-900 mb-4">
+                            <i class="fas fa-list-ul text-green-500 mr-2"></i>Detail Pilihan
+                        </h3>
+
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">
                                 Isi Pilihan <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="isi_pilihan" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-check-circle text-gray-400"></i>
+                                </div>
+                                <input type="text" name="isi_pilihan" required
+                                    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                    placeholder="Masukkan isi pilihan jawaban">
+                            </div>
                         </div>
 
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">
                                 Bobot Nilai <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="bobot_nilai" required step="0.01" min="0" max="1"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-balance-scale text-gray-400"></i>
+                                </div>
+                                <input type="number" name="bobot_nilai" required step="0.01" min="0" max="1"
+                                    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                    placeholder="Masukkan bobot nilai (0-1)">
+                            </div>
                         </div>
 
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">
                                 Urutan
                             </label>
-                            <input type="number" name="urutan" min="1"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-sort-numeric-down text-gray-400"></i>
+                                </div>
+                                <input type="number" name="urutan" min="1"
+                                    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                    placeholder="Masukkan urutan tampilan">
+                            </div>
                         </div>
                     </div>
 
                     <!-- Form untuk input range -->
-                    <div id="rangeInput" class="hidden">
-                        <div class="grid grid-cols-3 gap-4">
+                    <div id="rangeInput" class="hidden bg-gray-50 p-4 rounded-lg space-y-4">
+                        <h3 class="font-medium text-gray-900 mb-4">
+                            <i class="fas fa-sliders-h text-yellow-500 mr-2"></i>Pengaturan Range
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">
                                     Nilai Minimum <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" name="nilai_minimum" step="any"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                    </div>
+                                    <input type="number" name="nilai_minimum" step="any"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                        placeholder="Nilai minimum">
+                                </div>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">
                                     Nilai Maksimum <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" name="nilai_maksimum" step="any"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-arrow-up text-gray-400"></i>
+                                    </div>
+                                    <input type="number" name="nilai_maksimum" step="any"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                        placeholder="Nilai maksimum">
+                                </div>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">
                                     Interval <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" name="nilai_interval" step="any"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <i class="fas fa-arrows-alt-h text-gray-400"></i>
+                                    </div>
+                                    <input type="number" name="nilai_interval" step="any"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+                                        placeholder="Nilai interval">
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex justify-end space-x-3">
-                        <a href="index.php" 
-                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
+                    <div class="flex justify-end space-x-3 pt-6">
+                        <a href="index.php"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
+                            <i class="fas fa-times mr-2"></i>
                             Batal
                         </a>
                         <button type="submit"
-                                class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-save mr-2"></i>
                             Simpan Pilihan
                         </button>
                     </div>
@@ -206,10 +299,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.getElementById('pertanyaan').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
         const jenisInput = selectedOption.getAttribute('data-jenis');
-        
+
         const normalInput = document.getElementById('normalInput');
         const rangeInput = document.getElementById('rangeInput');
-        
+
         if (jenisInput === 'range') {
             normalInput.classList.add('hidden');
             rangeInput.classList.remove('hidden');
@@ -222,4 +315,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
+
 </html>
