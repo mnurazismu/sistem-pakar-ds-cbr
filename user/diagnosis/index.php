@@ -61,9 +61,9 @@ $total_steps = count($pertanyaan);
         <div class="p-4 border-2 border-gray-200 rounded-lg">
             <!-- Header Section -->
             <div class="mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800">Diagnosis Penyakit Tanaman Cabai</h1>
+                <h1 class="text-2xl font-semibold text-gray-800">Diagnosis Penyakit Tanaman Jagung</h1>
                 <p class="text-gray-600 mt-2">
-                    Silakan jawab pertanyaan berikut untuk mendiagnosis penyakit pada tanaman cabai Anda.
+                    Silakan jawab pertanyaan berikut untuk mendiagnosis penyakit pada tanaman jagung Anda.
                 </p>
             </div>
 
@@ -186,7 +186,7 @@ $total_steps = count($pertanyaan);
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Petunjuk Pengisian</h3>
                 <div class="prose max-w-none text-gray-600">
                     <ul class="list-disc pl-5 space-y-2">
-                        <li>Pilih gejala yang sesuai dengan kondisi tanaman cabai Anda</li>
+                        <li>Pilih gejala yang sesuai dengan kondisi tanaman jagung Anda</li>
                         <li>Pastikan untuk menjawab semua pertanyaan yang ada</li>
                         <li>Jika ragu, Anda dapat kembali ke pertanyaan sebelumnya</li>
                         <li>Hasil diagnosis akan menggunakan dua metode: Dempster-Shafer dan CBR</li>

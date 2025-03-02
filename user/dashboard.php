@@ -245,7 +245,7 @@ $common_diseases = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <h2 class="text-xl font-semibold mb-4">Informasi Sistem</h2>
                 <div class="prose max-w-none">
                     <p class="text-gray-600">
-                        Sistem Pakar Diagnosis Penyakit Tanaman Cabai ini menggunakan dua metode diagnosis:
+                        Sistem Pakar Diagnosis Penyakit Tanaman Jagung ini menggunakan dua metode diagnosis:
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div class="bg-blue-50 p-4 rounded-lg">
