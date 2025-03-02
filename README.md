@@ -126,7 +126,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Muhammad Nur Azis Mujiono - [muhammadnurazismu@gmail.com](mailto:muhammadnurazismu@gmail.com)
 
-Project Link: [https://github.com/mnurazismu/corn-disease-expert-system]([https://github.com/username/corn-disease-expert-system](https://github.com/mnurazismu/sistem-pakar-ds-cbr))
+Project Link: [https://github.com/mnurazismu?repositories]([https://github.com/username/corn-disease-expert-system](https://github.com/mnurazismu/sistem-pakar-ds-cbr))
 
 ## Acknowledgements
 
